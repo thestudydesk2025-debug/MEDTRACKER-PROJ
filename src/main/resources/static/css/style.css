@@ -1,0 +1,171 @@
+:root {
+    --primary: #007bff;
+    --primary-light: #4da3ff;
+    --primary-dark: #0056b3;
+    --secondary: #6c757d;
+    --success: #28a745;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --info: #17a2b8;
+    --light: #f8f9fa;
+    --dark: #343a40;
+    
+    --bg-main: #f4f6f9;
+    --bg-card: #ffffff;
+    --text-main: #333333;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    
+    --sidebar-bg: #2c3e50;
+    --sidebar-text: #ecf0f1;
+    --sidebar-hover: #34495e;
+    
+    --shadow-sm: 0 .125rem .25rem rgba(0,0,0,.075);
+    --shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    --shadow-lg: 0 1rem 3rem rgba(0,0,0,.175);
+    
+    --border-radius: 0.5rem;
+    --transition: all 0.3s ease-in-out;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.slide-up {
+    animation: slideUp 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    background-color: var(--bg-card);
+}
+
+.card:hover {
+    box-shadow: var(--shadow);
+}
+
+/* Auth Pages Specific */
+.auth-body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Floating background particles */
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    display: block;
+    pointer-events: none;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    animation: animateParticle 25s linear infinite;
+    bottom: -150px;
+}
+
+.particle:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+.particle:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
+.particle:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+.particle:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
+.particle:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
+.particle:nth-child(6) { left: 75%; width: 110px; height: 110px; animation-delay: 3s; }
+.particle:nth-child(7) { left: 35%; width: 150px; height: 150px; animation-delay: 7s; }
+.particle:nth-child(8) { left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
+.particle:nth-child(9) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; }
+.particle:nth-child(10) { left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; }
+
+@keyframes animateParticle {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
+    100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
+}
+
+.auth-container {
+    z-index: 1;
+    width: 100%;
+    max-width: 450px;
+    padding: 15px;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.auth-logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-logo i {
+    font-size: 3rem;
+    color: #17a2b8;
+    margin-bottom: 10px;
+}
+
+.auth-logo h3 {
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.auth-logo p {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.form-control:focus {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+}
+
+.btn-primary {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
+}

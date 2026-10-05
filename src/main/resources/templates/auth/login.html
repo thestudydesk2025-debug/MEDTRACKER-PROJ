@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedTrack - Login</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #2c3344;
+            --bg-gradient: linear-gradient(135deg, #374158 0%, #222736 100%);
+            --glass-bg: rgba(65, 80, 105, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-light: #e2e8f0;
+            --text-muted: #94a3b8;
+            --primary-accent: #6ee7b7; /* Turquoise/mint color from screenshot */
+            --primary-hover: #34d399;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-border: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating background icons */
+        .floating-icon {
+            position: absolute;
+            z-index: 0;
+            animation: moveAround 25s infinite linear;
+            opacity: 0.15;
+        }
+        
+        /* Different starting positions and animation durations for variety */
+        .icon-1 { top: -10%; left: 10%; font-size: 8rem; color: #f43f5e; animation-duration: 35s; animation-name: floatDrift1; }
+        .icon-2 { bottom: -10%; left: 30%; font-size: 6rem; color: #38bdf8; animation-duration: 40s; animation-name: floatDrift2; animation-delay: -5s; }
+        .icon-3 { top: 40%; right: -10%; font-size: 5rem; color: #a78bfa; animation-duration: 30s; animation-name: floatDrift3; animation-delay: -12s; }
+        .icon-4 { bottom: -10%; right: 20%; font-size: 7rem; color: #34d399; animation-duration: 45s; animation-name: floatDrift4; animation-delay: -2s; }
+        .icon-5 { top: -10%; left: 50%; font-size: 4rem; color: #fbbf24; animation-duration: 28s; animation-name: floatDrift1; animation-delay: -15s; }
+        .icon-6 { top: 60%; left: -10%; font-size: 6.5rem; color: #f472b6; animation-duration: 38s; animation-name: floatDrift2; animation-delay: -8s; }
+        .icon-7 { bottom: -10%; left: 70%; font-size: 5.5rem; color: #6ee7b7; animation-duration: 32s; animation-name: floatDrift4; animation-delay: -20s; }
+        .icon-8 { top: -10%; right: 30%; font-size: 7.5rem; color: #c084fc; animation-duration: 42s; animation-name: floatDrift3; animation-delay: -7s; }
+
+        @keyframes floatDrift1 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(15vw, 30vh) rotate(120deg); }
+            66% { transform: translate(-10vw, 60vh) rotate(240deg); }
+            100% { transform: translate(0, 110vh) rotate(360deg); }
+        }
+        @keyframes floatDrift2 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(20vw, -30vh) rotate(-120deg); }
+            66% { transform: translate(40vw, -60vh) rotate(-240deg); }
+            100% { transform: translate(60vw, -110vh) rotate(-360deg); }
+        }
+        @keyframes floatDrift3 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-30vw, 20vh) rotate(90deg); }
+            66% { transform: translate(-60vw, -20vh) rotate(180deg); }
+            100% { transform: translate(-110vw, -10vh) rotate(360deg); }
+        }
+        @keyframes floatDrift4 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20vw, -40vh) rotate(-90deg); }
+            66% { transform: translate(10vw, -80vh) rotate(-180deg); }
+            100% { transform: translate(20vw, -120vh) rotate(-360deg); }
+        }
+
+        /* Layout */
+        .auth-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 2rem 4rem;
+            z-index: 1;
+            position: relative;
+            align-items: center;
+        }
+
+        .auth-left {
+            flex: 1;
+            padding-right: 4rem;
+        }
+
+        .auth-right {
+            flex: 0 0 450px;
+        }
+
+        /* Left Side Content */
+        .brand-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            letter-spacing: -1px;
+            color: #ffffff;
+        }
+        .brand-title i {
+            margin-right: 15px;
+            transform: rotate(-45deg);
+        }
+        
+        .brand-subtitle {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #f8fafc;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-desc {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            max-width: 80%;
+        }
+
+        .heartbeat-line {
+            width: 300px;
+            height: 100px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100'%3E%3Cpath d='M0,50 L50,50 L65,20 L80,80 L100,30 L115,50 L300,50' fill='none' stroke='%236ee7b7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left center;
+            position: relative;
+        }
+        .heartbeat-pill {
+            position: absolute;
+            left: 120px;
+            top: 55px;
+            font-size: 2rem;
+            color: var(--text-muted);
+            transform: rotate(-45deg);
+        }
+
+        /* Right Side Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .welcome-text {
+            color: var(--primary-accent);
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.4rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.icon-left {
+            position: absolute;
+            left: 15px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: white;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 0 3px rgba(110, 231, 183, 0.2);
+            color: white;
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-toggle-pass {
+            position: absolute;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0;
+        }
+
+        /* Checkbox & Links */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            font-size: 0.85rem;
+        }
+
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+        
+        .custom-checkbox input[type="checkbox"] {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            background: var(--input-bg);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .custom-checkbox input[type="checkbox"]:checked {
+            background: var(--primary-accent);
+            border-color: var(--primary-accent);
+        }
+        
+        .custom-checkbox input[type="checkbox"]:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #000;
+            position: absolute;
+            font-size: 10px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .forgot-link {
+            color: var(--primary-accent);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .forgot-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        /* Buttons */
+        .btn-signin {
+            background: var(--primary-accent);
+            color: #0f172a;
+            border: none;
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        .btn-signin:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(110, 231, 183, 0.4);
+        }
+
+        .btn-create {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: 25px;
+            font-weight: 500;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-create:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .auth-container {
+                flex-direction: column;
+                padding: 2rem;
+            }
+            .auth-left {
+                padding-right: 0;
+                margin-bottom: 3rem;
+                text-align: center;
+            }
+            .brand-desc {
+                margin: 0 auto 2rem;
+            }
+            .heartbeat-line {
+                margin: 0 auto;
+            }
+            .brand-title {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Icons -->
+    <i class="fa-solid fa-droplet floating-icon icon-1"></i>
+    <i class="fa-solid fa-heart-pulse floating-icon icon-2"></i>
+    <i class="fa-solid fa-clipboard-list floating-icon icon-3"></i>
+    <i class="fa-solid fa-band-aid floating-icon icon-4"></i>
+    <i class="fa-solid fa-pills floating-icon icon-5"></i>
+    <i class="fa-solid fa-stethoscope floating-icon icon-6"></i>
+    <i class="fa-solid fa-syringe floating-icon icon-7"></i>
+    <i class="fa-solid fa-briefcase-medical floating-icon icon-8"></i>
+
+    <div class="auth-container">
+        
+        <!-- Left Side Content -->
+        <div class="auth-left">
+            <div class="brand-title">
+                <i class="fa-solid fa-capsules"></i> MedTrack
+            </div>
+            <div class="brand-subtitle">
+                Healthcare Inventory Intelligence
+            </div>
+            <div class="brand-desc">
+                Smarter Medicine Management. Safer Inventory.<br>
+                Track. Protect. Replenish.
+            </div>
+            <div class="heartbeat-line">
+                <i class="fa-solid fa-capsules heartbeat-pill"></i>
+            </div>
+        </div>
+
+        <!-- Right Side Login Form -->
+        <div class="auth-right">
+            <div class="glass-card">
+                <h3 class="welcome-text">Welcome Back</h3>
+                
+                <!-- Alerts -->
+                <div th:if="${param.error}" class="alert alert-danger" style="background: rgba(220,53,69,0.2); border-color: rgba(220,53,69,0.3); color: #f8d7da;">
+                    <i class="fa-solid fa-circle-exclamation me-2"></i> Invalid username or password.
+                </div>
+                <div th:if="${param.logout}" class="alert alert-success" style="background: rgba(40,167,69,0.2); border-color: rgba(40,167,69,0.3); color: #d4edda;">
+                    <i class="fa-solid fa-circle-check me-2"></i> Logged out successfully.
+                </div>
+                <div th:if="${param.registered}" class="alert alert-success" style="background: rgba(40,167,69,0.2); border-color: rgba(40,167,69,0.3); color: #d4edda;">
+                    <i class="fa-solid fa-circle-check me-2"></i> Registration successful!
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="form-group">
+                        <div class="form-label">USERNAME OR EMAIL</div>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-user icon-left"></i>
+                            <input type="text" class="form-control" name="username" required autofocus autocomplete="off">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="form-label">PASSWORD</div>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-shield-halved icon-left"></i>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <button type="button" class="btn-toggle-pass" id="togglePassword">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="remember-me" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-signin">SIGN IN</button>
+                    <a th:href="@{/register}" class="btn-create">CREATE ACCOUNT</a>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toggle Password Script -->
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    </script>
+</body>
+</html>

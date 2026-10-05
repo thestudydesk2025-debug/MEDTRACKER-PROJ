@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Medicine Stock & Expiry Tracker</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-pills fa-2x text-info"></i>
+            <h4 class="mb-0 ms-2 text-white">MedTracker</h4>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li class="active">
+                <a th:href="@{/}"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            </li>
+            <li>
+                <a th:href="@{/medicines}"><i class="fa-solid fa-capsules"></i> Medicines</a>
+            </li>
+            <li>
+                <a th:href="@{/inventory}"><i class="fa-solid fa-boxes-stacked"></i> Inventory</a>
+            </li>
+            <li>
+                <a th:href="@{/alerts}"><i class="fa-solid fa-triangle-exclamation"></i> Stock Alerts</a>
+            </li>
+            <li>
+                <a th:href="@{/expiry}"><i class="fa-regular fa-calendar-xmark"></i> Expiry Tracker</a>
+            </li>
+            <li>
+                <a th:href="@{/reorders}"><i class="fa-solid fa-cart-shopping"></i> Reorder Management</a>
+            </li>
+            <li>
+                <a th:href="@{/suppliers}"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+            </li>
+            <li>
+                <a th:href="@{/categories}"><i class="fa-solid fa-layer-group"></i> Categories</a>
+            </li>
+            <li>
+                <a th:href="@{/transactions}"><i class="fa-solid fa-money-bill-transfer"></i> Transactions</a>
+            </li>
+            <li>
+                <a th:href="@{/reports}"><i class="fa-solid fa-chart-pie"></i> Reports</a>
+            </li>
+        </ul>
+        
+        <ul class="list-unstyled components mt-auto">
+            <li>
+                <a th:href="@{/settings}"><i class="fa-solid fa-gear"></i> Settings</a>
+            </li>
+            <li>
+                <form th:action="@{/logout}" method="post" class="m-0 p-0">
+                    <button type="submit" class="btn btn-link w-100 text-start sidebar-logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <div id="content" class="w-100">
+        
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4 top-navbar">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn btn-info text-white">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                
+                <div class="ms-3 d-none d-md-block">
+                    <h5 class="mb-0 text-dark fw-bold">Dashboard</h5>
+                </div>
+
+                <div class="ms-auto d-flex align-items-center">
+                    <form th:action="@{/medicines}" method="get" class="search-box me-3">
+                        <input type="text" name="search" class="form-control" placeholder="Search medicine...">
+                        <button type="submit" class="btn btn-link p-0 position-absolute end-0 top-50 translate-middle-y me-3 text-muted" style="border: none; background: transparent;">
+                            <i class="fa-solid fa-search"></i>
+                        </button>
+                    </form>
+                    
+                    <div class="dropdown me-3">
+                        <a class="nav-link dropdown-toggle position-relative" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fa-regular fa-bell fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${lowStockCount + expiringSoonCount}">
+                                0
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li><h6 class="dropdown-header">Notifications</h6></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-triangle-exclamation text-warning me-2"></i> <span th:text="${lowStockCount}"></span> low stock items</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa-regular fa-calendar-xmark text-danger me-2"></i> <span th:text="${expiringSoonCount}"></span> expiring soon</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-center text-primary" th:href="@{/alerts}">View all alerts</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name=User&background=17a2b8&color=fff" alt="User" class="rounded-circle" width="35" height="35">
+                            <span class="ms-2 d-none d-md-block" th:text="${#authentication.name}">Username</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li><a class="dropdown-item" href="#"><i class="fa-regular fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="dropdown-item text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="container-fluid content-area fade-in">
+            
+            <!-- Dashboard Stats Row 1 -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card primary h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.8rem;">Total Medicines</h6>
+                                    <h2 class="mb-0 fw-bold" th:text="${totalMedicines}">0</h2>
+                                </div>
+                                <div class="icon-circle bg-primary-light">
+                                    <i class="fa-solid fa-capsules text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card" style="border-left-color: #17a2b8;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.8rem;">Total Stock (Units)</h6>
+                                    <h2 class="mb-0 fw-bold" th:text="${totalStock}">0</h2>
+                                </div>
+                                <div class="icon-circle" style="background-color: rgba(23, 162, 184, 0.2);">
+                                    <i class="fa-solid fa-boxes-stacked text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card warning h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.8rem;">Reorder Required</h6>
+                                    <h2 class="mb-0 fw-bold" th:text="${lowStockCount}">0</h2>
+                                </div>
+                                <div class="icon-circle bg-warning-light">
+                                    <i class="fa-solid fa-triangle-exclamation text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card danger h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.8rem;">Out of Stock</h6>
+                                    <h2 class="mb-0 fw-bold text-danger" th:text="${outOfStockCount}">0</h2>
+                                </div>
+                                <div class="icon-circle bg-danger-light">
+                                    <i class="fa-solid fa-ban text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Stats Row 2 -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card warning h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.8rem;">Expiring Soon</h6>
+                                    <h2 class="mb-0 fw-bold text-warning" th:text="${expiringSoonCount}">0</h2>
+                                </div>
+                                <div class="icon-circle bg-warning-light">
+                                    <i class="fa-regular fa-clock text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card danger h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.8rem;">Expired Medicines</h6>
+                                    <h2 class="mb-0 fw-bold text-danger" th:text="${expiredCount}">0</h2>
+                                </div>
+                                <div class="icon-circle bg-danger-light">
+                                    <i class="fa-solid fa-calendar-xmark text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card success h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.8rem;">Total Suppliers</h6>
+                                    <h2 class="mb-0 fw-bold" th:text="${totalSuppliers}">0</h2>
+                                </div>
+                                <div class="icon-circle bg-success-light">
+                                    <i class="fa-solid fa-truck-field text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card warning h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.8rem;">Low Stock</h6>
+                                    <h2 class="mb-0 fw-bold text-warning" th:text="${lowStockCount}">0</h2>
+                                </div>
+                                <div class="icon-circle bg-warning-light">
+                                    <i class="fa-solid fa-arrow-trend-down text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row mb-4">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <div class="card h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h6 class="mb-0 fw-bold"><i class="fa-solid fa-chart-line text-info me-2"></i> Inventory Overview</h6>
+                        </div>
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <!-- Placeholder for Chart.js -->
+                            <canvas id="inventoryChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h6 class="mb-0 fw-bold"><i class="fa-solid fa-chart-pie text-info me-2"></i> Expiry Status</h6>
+                        </div>
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <!-- Placeholder for Chart.js -->
+                            <canvas id="expiryChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medicines List Row -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold"><i class="fa-solid fa-triangle-exclamation text-danger me-2"></i> Action Required (Low Stock & Expired)</h5>
+                            <a th:href="@{/medicines}" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Medicine Name</th>
+                                            <th>Issue</th>
+                                            <th>Current Stock</th>
+                                            <th>Expiry Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:if="${#lists.isEmpty(medicines)}">
+                                            <td colspan="4" class="text-center py-4 text-success fw-bold"><i class="fa-solid fa-check-circle me-2"></i>All good! No medicines require immediate attention.</td>
+                                        </tr>
+                                        <tr th:each="medicine, iterStat : ${medicines}" th:if="${iterStat.index < 10}">
+                                            <td>
+                                                <div class="fw-bold" th:text="${medicine.name}">Amoxicillin</div>
+                                                <div class="small text-muted" th:text="${medicine.batchNumber}">BAT-123</div>
+                                            </td>
+                                            <td>
+                                                <span th:if="${medicine.quantity <= 0}" class="badge bg-danger mb-1">Out of Stock</span>
+                                                <span th:if="${medicine.quantity > 0 and medicine.quantity <= medicine.minimumStock}" class="badge bg-warning text-dark mb-1">Low Stock</span>
+                                                <span th:if="${medicine.expiryDate.isBefore(today)}" class="badge bg-danger">Expired</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-semibold" th:text="${medicine.quantity} + ' / ' + ${medicine.minimumStock} + ' (Min)'"></span>
+                                            </td>
+                                            <td>
+                                                <div th:text="${medicine.expiryDate}" th:class="${medicine.expiryDate.isBefore(today) ? 'text-danger fw-bold' : ''}">2026-10-10</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:src="@{/js/main.js}"></script>
+<script th:inline="javascript">
+    // Add simple chart placeholders for now
+    document.addEventListener("DOMContentLoaded", function() {
+        const invCtx = document.getElementById('inventoryChart').getContext('2d');
+        const expCtx = document.getElementById('expiryChart').getContext('2d');
+        
+        new Chart(invCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Stock In',
+                    data: [120, 190, 300, 250, 200, 350],
+                    backgroundColor: 'rgba(23, 162, 184, 0.7)'
+                }, {
+                    label: 'Stock Out',
+                    data: [100, 150, 200, 300, 250, 100],
+                    backgroundColor: 'rgba(220, 53, 69, 0.7)'
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+        
+        const expiringCount = /*[[${expiringSoonCount}]]*/ 5;
+        const expiredCount = /*[[${expiredCount}]]*/ 2;
+        const healthyCount = /*[[${totalMedicines - expiringSoonCount - expiredCount}]]*/ 50;
+
+        new Chart(expCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Healthy', 'Expiring Soon', 'Expired'],
+                datasets: [{
+                    data: [healthyCount, expiringCount, expiredCount],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    });
+</script>
+</body>
+</html>
